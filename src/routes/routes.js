@@ -1,9 +1,12 @@
 import { Router } from 'express' ;
 import { clientPg } from '../db/postgres.js';
 
+import { signUpController } from '../controllers/loginAndRegisterControll.js';
+import { signUpMiddle } from '../middlewares/loginAndRegisterMWs.js';
+
 const route = Router();
 
-route.post('/signup');
+route.post('/signup', signUpMiddle, signUpController);
 route.post('/signin');
 
 route.post('/urls/shorten');

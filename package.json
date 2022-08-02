@@ -1,8 +1,8 @@
 {
   "name": "projeto16-shortly",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Back-end server to deal with urls doing a short method of url's",
+  "main": "src/app.js",
   "type": "module",
   "scripts": {
     "start": "npm run src/app.js",
@@ -10,14 +10,17 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Balcky",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "joi": "^17.6.0",
-    "nodemon": "^2.0.19",
-    "pg": "^8.7.3"
+    "pg": "^8.7.3",
+    "bcrypt": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
   }
 }
