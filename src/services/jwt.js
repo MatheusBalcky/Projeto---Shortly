@@ -8,6 +8,10 @@ export function createToken (payload){
 }
 
 export function verifyToken(token){
-    const verifyToken =  jwt.verify(token, process.env.SECRET);
-    return verifyToken
+    try {
+        const verifyToken =  jwt.verify(token, process.env.SECRET);
+        return true
+    } catch (error) {
+        return false
+    }
 }

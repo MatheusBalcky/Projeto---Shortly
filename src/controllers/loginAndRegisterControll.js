@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { clientPg } from "../db/postgres.js";
-import { createToken, verifyToken } from '../services/jwt.js';
+import { createToken } from '../services/jwt.js';
 
 export async function signUpController (req,res){
     const userToRegister = req.body;
