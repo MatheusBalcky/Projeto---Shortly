@@ -1,5 +1,6 @@
 import { clientPg } from "../db/postgres.js";
-import { registerSchema } from "../schemas/loginAndRegisterSchemas.js";
+import { registerSchema, loginSchema } from "../schemas/loginAndRegisterSchemas.js";
+import bcrypt from 'bcrypt';
 
 export async function signUpMiddle (req, res, next){
     const userToRegister = req.body;
@@ -20,6 +21,36 @@ export async function signUpMiddle (req, res, next){
 
         next();
     } catch (error){
+        console.log(error);
+        res.sendStatus(500);
+    }
+}
+
+export async function signInMiddle (req, res, next){
+    const signInData = req.body;
+
+    const { error } = loginSchema.validate(signInData);
+    if(error){
+        return res.status(422).send(error.details[0].message);
+    }
+
+    try {
+        const { rows: verifyEmail } = await clientPg.query(`
+        SELECT * FROM users WHERE email = $1`,[signInData.email.toLowerCase()]);
+
+        if(verifyEmail.length < 1){
+            return res.sendStatus(401);
+        }
+
+        const verifyPassword = bcrypt.compareSync(signInData.password, verifyEmail[0].password);
+
+        if(!verifyPassword){
+            return res.sendStatus(401);
+        }
+
+        next();
+    } catch (error) {
+
         console.log(error);
         res.sendStatus(500);
     }

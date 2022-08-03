@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { clientPg } from "../db/postgres.js";
-
+import { createToken, verifyToken } from '../services/jwt.js';
 
 export async function signUpController (req,res){
     const userToRegister = req.body;
@@ -18,6 +18,20 @@ export async function signUpController (req,res){
 
     } catch (error) {
 
+        console.log(error);
+        res.sendStatus(500);
+        
+    }
+}
+
+export async function signInController (req,res){
+    const signInData = req.body;
+
+    try {
+        const token = createToken({ userEmail: signInData.email})
+
+        res.status(200).send(token);
+    } catch (error) {
         console.log(error);
         res.sendStatus(500);
         
