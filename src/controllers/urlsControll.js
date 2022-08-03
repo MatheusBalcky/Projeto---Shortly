@@ -46,3 +46,31 @@ export async function getUrlById (req, res){
         res.sendStatus(500);
     }
 }
+
+export async function openShortUrl (req, res){
+    const shortUrl =  req.params.shortUrl;
+    
+    try {
+
+        const { rows: findShortUrl } = await clientPg.query(`
+        SELECT * FROM "shortenUrls"
+        WHERE "shortUrl" = $1`, [shortUrl]);
+
+        if(findShortUrl.length < 1){
+            return res.sendStatus(404)
+        }
+        
+        await clientPg.query(`
+        UPDATE "shortenUrls"
+        SET views = views + 1
+        WHERE id = $1`, [findShortUrl[0].id])
+        
+
+        return res.redirect(findShortUrl[0].url);
+    } catch (error) {
+
+        console.log(error);
+        return res.sendStatus(500);
+
+    }
+}
