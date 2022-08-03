@@ -25,11 +25,11 @@ export async function signUpController (req,res){
 }
 
 export async function signInController (req,res){
-    const signInData = req.body;
+    const { idUser } = res.locals;
 
     try {
         
-        const token = createToken({ userEmail: signInData.email})
+        const token = createToken({ idUser: idUser})
 
         res.status(200).send(token);
 

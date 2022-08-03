@@ -48,6 +48,8 @@ export async function signInMiddle (req, res, next){
             return res.sendStatus(401);
         }
 
+        res.locals.idUser = verifyEmail[0].id;
+        
         next();
     } catch (error) {
 

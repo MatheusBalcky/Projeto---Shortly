@@ -3,17 +3,15 @@ import { nanoid } from 'nanoid';
 
 export async function urlShortenControll (req, res){
     const shortUrl = nanoid();
-    const { userEmail } = res.locals.verifyTokenResult;
+    const { idUser } = res.locals.verifyTokenResult;
     const { url } = req.body;
 
     try {
-
-        const { rows: userId } = await clientPg.query(`SELECT id FROM users WHERE email = $1`, [userEmail]);
         
         await clientPg.query(`
         INSERT INTO "shortenUrls" (url, "fromUserId", "shortUrl")
         VALUES ($1, $2, $3)`,
-        [url, userId[0].id, shortUrl]);
+        [url, idUser, shortUrl]);
 
         res.status(201).send( {shortUrl: shortUrl} );
 
@@ -71,6 +69,25 @@ export async function openShortUrl (req, res){
 
         console.log(error);
         return res.sendStatus(500);
+
+    }
+}
+
+export async function deleteShortUrl (req, res){
+    const idToDelete = parseInt(req.params.id);
+
+    try {
+        
+        await clientPg.query(`
+        DELETE FROM "shortenUrls"
+        WHERE id = $1`, [idToDelete]);
+
+        res.sendStatus(204);
+
+    } catch (error) {
+
+        console.log(error);
+        res.sendStatus(500);
 
     }
 }
