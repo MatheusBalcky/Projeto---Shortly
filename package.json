@@ -5,9 +5,8 @@
   "main": "src/app.js",
   "type": "module",
   "scripts": {
-    "start": "npm run src/app.js",
-    "dev": "nodemon src/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
   },
   "keywords": [],
   "author": "Balcky",

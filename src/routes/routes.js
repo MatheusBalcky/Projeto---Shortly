@@ -5,7 +5,7 @@ import { signUpMiddle, signInMiddle } from '../middlewares/loginAndRegisterMWs.j
 import { urlShortenControll, getUrlById, openShortUrl, deleteShortUrl } from '../controllers/urlsControll.js';
 import { urlShortenMW, deleteShortUrlMW } from '../middlewares/urlMWs.js';
 import { verifyTokenMW } from '../middlewares/verifyTokenMW.js';
-
+import { userMeControll } from '../controllers/userControll.js';
 
 const route = Router();
 
@@ -17,7 +17,7 @@ route.get('/urls/:id', getUrlById);
 route.get('/urls/open/:shortUrl', openShortUrl);
 route.delete('/urls/:id', verifyTokenMW, deleteShortUrlMW, deleteShortUrl);
 
-route.get('/users/me');
+route.get('/users/me', verifyTokenMW, userMeControll);
 
 route.get('/ranking');
 
