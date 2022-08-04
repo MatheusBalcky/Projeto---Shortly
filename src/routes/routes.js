@@ -6,6 +6,7 @@ import { urlShortenControll, getUrlById, openShortUrl, deleteShortUrl } from '..
 import { urlShortenMW, deleteShortUrlMW } from '../middlewares/urlMWs.js';
 import { verifyTokenMW } from '../middlewares/verifyTokenMW.js';
 import { userMeControll } from '../controllers/userControll.js';
+import { rankingControll } from '../controllers/rankingControll.js';
 
 const route = Router();
 
@@ -19,19 +20,13 @@ route.delete('/urls/:id', verifyTokenMW, deleteShortUrlMW, deleteShortUrl);
 
 route.get('/users/me', verifyTokenMW, userMeControll);
 
-route.get('/ranking');
+route.get('/ranking', rankingControll);
 
 
 
 
 route.get('/test', async (req, res) => {
-    try {
-        const { rows: test } = await clientPg.query(`SELECT * FROM test`);
-        res.status(200).send(test);
-    } catch (error) {
-        console.log(error)
-        res.sendStatus(500);
-    }
-})
+    return res.status(200).send('Hello World');
+});
 
 export default route;

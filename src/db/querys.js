@@ -53,3 +53,15 @@ WHERE users.id = $1
 
 GROUP BY users.id, "shortenUrls2".id, "shortenUrls2".views
 `;
+
+
+export const queryToGetRanking = `
+SELECT users.id, name, COUNT("shortenUrls"."fromUserId") as "linksCount", SUM("shortenUrls".views) as "visitCount"
+FROM users
+
+JOIN "shortenUrls"
+ON "shortenUrls"."fromUserId" = users.id
+
+GROUP BY users.id
+ORDER BY "visitCount" DESC
+LIMIT 10`
