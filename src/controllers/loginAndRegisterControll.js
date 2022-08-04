@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt';
 import { clientPg } from "../db/postgres.js";
 import { createToken } from '../services/jwt.js';
+import { queryToInsertNewUser } from '../db/querys.js';
+
 
 export async function signUpController (req,res){
     const userToRegister = req.body;
@@ -9,10 +11,7 @@ export async function signUpController (req,res){
 
         const passwordCrypted = bcrypt.hashSync(userToRegister.password, 10);
 
-        await clientPg.query(`
-            INSERT INTO users (name, email, password)
-            VALUES ($1, $2, $3)
-        `, [userToRegister.name, userToRegister.email.toLowerCase(), passwordCrypted]);
+        await clientPg.query(queryToInsertNewUser,[userToRegister.name, userToRegister.email.toLowerCase(), passwordCrypted]);
 
         res.sendStatus(201);
 

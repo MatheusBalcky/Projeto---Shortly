@@ -1,5 +1,7 @@
 import { clientPg } from "../db/postgres.js";
 import { nanoid } from 'nanoid';
+import { queryToInsertNewShortenUrl, queryToGetUrlById, queryToGetUrlByShortUrl, queryToPlusOneView }
+from "../db/querys.js";
 
 export async function urlShortenControll (req, res){
     const shortUrl = nanoid();
@@ -8,10 +10,7 @@ export async function urlShortenControll (req, res){
 
     try {
         
-        await clientPg.query(`
-        INSERT INTO "shortenUrls" (url, "fromUserId", "shortUrl")
-        VALUES ($1, $2, $3)`,
-        [url, idUser, shortUrl]);
+        await clientPg.query(queryToInsertNewShortenUrl,[url, idUser, shortUrl]);
 
         res.status(201).send( {shortUrl: shortUrl} );
 
@@ -30,9 +29,7 @@ export async function getUrlById (req, res){
     }
 
     try {
-        const { rows: findUrlById } = await clientPg.query(`
-        SELECT id, url, "shortUrl" FROM "shortenUrls"
-        WHERE id = $1`, [id]);
+        const { rows: findUrlById } = await clientPg.query(queryToGetUrlById, [id]);
         
         if(findUrlById.length < 1){
             res.sendStatus(404);
@@ -50,21 +47,16 @@ export async function openShortUrl (req, res){
     
     try {
 
-        const { rows: findShortUrl } = await clientPg.query(`
-        SELECT * FROM "shortenUrls"
-        WHERE "shortUrl" = $1`, [shortUrl]);
+        const { rows: findShortUrl } = await clientPg.query(queryToGetUrlByShortUrl, [shortUrl]);
 
         if(findShortUrl.length < 1){
             return res.sendStatus(404)
         }
         
-        await clientPg.query(`
-        UPDATE "shortenUrls"
-        SET views = views + 1
-        WHERE id = $1`, [findShortUrl[0].id])
-        
+        await clientPg.query(queryToPlusOneView, [findShortUrl[0].id])
 
         return res.redirect(findShortUrl[0].url);
+
     } catch (error) {
 
         console.log(error);
@@ -78,9 +70,7 @@ export async function deleteShortUrl (req, res){
 
     try {
         
-        await clientPg.query(`
-        DELETE FROM "shortenUrls"
-        WHERE id = $1`, [idToDelete]);
+        await clientPg.query(` DELETE FROM "shortenUrls" WHERE id = $1`, [idToDelete]);
 
         res.sendStatus(204);
 
