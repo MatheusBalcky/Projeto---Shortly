@@ -1,5 +1,4 @@
 import { Router } from 'express' ;
-import { clientPg } from '../db/postgres.js';
 import { signUpController, signInController } from '../controllers/loginAndRegisterControll.js';
 import { signUpMiddle, signInMiddle } from '../middlewares/loginAndRegisterMWs.js';
 import { urlShortenControll, getUrlById, openShortUrl, deleteShortUrl } from '../controllers/urlsControll.js';
