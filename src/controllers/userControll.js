@@ -5,20 +5,13 @@ export async function userMeControll(req, res){
 
     try {
 
-        const { rows: findUserData } = await userRepo.getUserData(idUser);
+        const result = await userRepo.getUserData(idUser);
         
-        if(findUserData.length < 1){
+        if(!result.id){
             return res.sendStatus(404);
         }
-        
-        const queryOrganized = {
-            id: findUserData[0].id,
-            name: findUserData[0].name,
-            visitCount: findUserData[0].visitCount,
-            shortenedUrls: findUserData.map( item => item.shortenedUrls)
-        }
 
-        return res.status(200).send( queryOrganized );
+        return res.status(200).send( result );
 
     } catch (error) {
 

@@ -9,29 +9,30 @@ export async function insertNewUser (name, email, password){
 }
 
 export async function getUserData (idUser){
-    return await clientPg.query(`
-    SELECT 
-    users.id, users.name, SUM("shortenUrls".views) as "visitCount",
-    
-    json_build_object
-    (
-    'id', "shortenUrls2".id,
-    'url', "shortenUrls2".url,
-    'views', "shortenUrls2".views
-    ) AS "shortenedUrls"
-    
+    const { rows: findUser } = await clientPg.query(`
+    SELECT users.id, users.name
     FROM users
+    WHERE users.id = $1`, [idUser]);
+
+    const { rows: getCountsVisit } = await clientPg.query(`
+    SELECT SUM("shortenUrls".views) as "visitCount"
+    FROM "shortenUrls"
+    WHERE "fromUserId" = $1`, [idUser]);
     
-    JOIN "shortenUrls"
-    ON "shortenUrls"."fromUserId" = users.id
-    
-    JOIN "shortenUrls" as "shortenUrls2"
-    ON "shortenUrls2"."fromUserId" = users.id
-    
-    WHERE users.id = $1
-    
-    GROUP BY users.id, "shortenUrls2".id, "shortenUrls2".views
-    `, [idUser]);
+    let visitCount = 0;
+    if(getCountsVisit[0].visitCount != null){
+        visitCount = getCountsVisit[0].visitCount
+    }
+
+    const { rows: getShortUrls } = await clientPg.query(`
+    SELECT id, "shortUrl", url, views as "visitCount" FROM "shortenUrls"
+    WHERE "fromUserId" = $1`, [idUser]);
+
+    return {
+        ...findUser[0],
+        visitCount,
+        shortenedUrls: getShortUrls
+    }
 }
 
 
