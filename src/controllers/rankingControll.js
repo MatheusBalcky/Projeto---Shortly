@@ -1,10 +1,9 @@
-import { clientPg } from "../db/postgres.js";
-import { queryToGetRanking } from "../db/querys.js";
+import { rankingRepo } from "../repositories/rankingRepo.js";
 
 export async function rankingControll (req, res){
     try {
 
-        const { rows: rankingReuslt } = await clientPg.query(queryToGetRanking);
+        const { rows: rankingReuslt } = await rankingRepo.getRanking();
         //console.log(rankingReuslt.length)
         res.status(200).send(rankingReuslt);
 

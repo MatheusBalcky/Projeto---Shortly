@@ -1,7 +1,5 @@
-import { clientPg } from "../db/postgres.js";
 import { nanoid } from 'nanoid';
-import { queryToInsertNewShortenUrl, queryToGetUrlById, queryToGetUrlByShortUrl, queryToPlusOneView }
-from "../db/querys.js";
+import  {urlsRepo}  from "../repositories/urlsRepo.js";
 
 export async function urlShortenControll (req, res){
     const shortUrl = nanoid();
@@ -10,7 +8,7 @@ export async function urlShortenControll (req, res){
 
     try {
         
-        await clientPg.query(queryToInsertNewShortenUrl,[url, idUser, shortUrl]);
+        await urlsRepo.insertNewShortenUrl(url, idUser, shortUrl);
 
         res.status(201).send( {shortUrl: shortUrl} );
 
@@ -29,7 +27,7 @@ export async function getUrlById (req, res){
     }
 
     try {
-        const { rows: findUrlById } = await clientPg.query(queryToGetUrlById, [id]);
+        const { rows: findUrlById } = await urlsRepo.getUrlById(id);
         
         if(findUrlById.length < 1){
             res.sendStatus(404);
@@ -47,13 +45,13 @@ export async function openShortUrl (req, res){
     
     try {
 
-        const { rows: findShortUrl } = await clientPg.query(queryToGetUrlByShortUrl, [shortUrl]);
+        const { rows: findShortUrl } = await urlsRepo.findUrl(shortUrl);
 
         if(findShortUrl.length < 1){
             return res.sendStatus(404)
         }
         
-        await clientPg.query(queryToPlusOneView, [findShortUrl[0].id])
+        await urlsRepo.plusOneView(findShortUrl[0].id);
 
         return res.redirect(findShortUrl[0].url);
 
@@ -70,7 +68,7 @@ export async function deleteShortUrl (req, res){
 
     try {
         
-        await clientPg.query(` DELETE FROM "shortenUrls" WHERE id = $1`, [idToDelete]);
+        await urlsRepo.deleteUrl(idToDelete);
 
         res.sendStatus(204);
 

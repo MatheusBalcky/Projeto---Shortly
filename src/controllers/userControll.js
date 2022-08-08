@@ -1,13 +1,12 @@
-import { clientPg } from "../db/postgres.js";
-import { queryToGetUserAndUrls } from "../db/querys.js";
+import { userRepo } from "../repositories/userRepo.js";
 
 export async function userMeControll(req, res){
     const { idUser } = res.locals.verifyTokenResult;
 
     try {
 
-        const { rows: findUserData } = await clientPg.query(queryToGetUserAndUrls, [idUser]);
-    
+        const { rows: findUserData } = await userRepo.getUserData(idUser);
+        
         if(findUserData.length < 1){
             return res.sendStatus(404);
         }

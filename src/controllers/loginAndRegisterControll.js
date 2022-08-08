@@ -1,8 +1,6 @@
 import bcrypt from 'bcrypt';
-import { clientPg } from "../db/postgres.js";
 import { createToken } from '../services/jwt.js';
-import { queryToInsertNewUser } from '../db/querys.js';
-
+import { userRepo } from '../repositories/userRepo.js'
 
 export async function signUpController (req,res){
     const userToRegister = req.body;
@@ -11,7 +9,7 @@ export async function signUpController (req,res){
 
         const passwordCrypted = bcrypt.hashSync(userToRegister.password, 10);
 
-        await clientPg.query(queryToInsertNewUser,[userToRegister.name, userToRegister.email.toLowerCase(), passwordCrypted]);
+        await userRepo.insertNewUser(userToRegister.name, userToRegister.email.toLowerCase(), passwordCrypted);
 
         res.sendStatus(201);
 
@@ -28,7 +26,7 @@ export async function signInController (req,res){
 
     try {
         
-        const token = createToken({ idUser: idUser})
+        const token = createToken({ idUser: idUser});
 
         res.status(200).send(token);
 
