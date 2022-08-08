@@ -1,7 +1,6 @@
 import { clientPg } from "../db/postgres.js";
 
 export async function insertNewUser (name, email, password){
-
     return await clientPg.query(`
     INSERT INTO users (name, email, password)
     VALUES ($1, $2, $3)
@@ -18,11 +17,6 @@ export async function getUserData (idUser){
     SELECT SUM("shortenUrls".views) as "visitCount"
     FROM "shortenUrls"
     WHERE "fromUserId" = $1`, [idUser]);
-    
-    let visitCount = 0;
-    if(getCountsVisit[0].visitCount != null){
-        visitCount = getCountsVisit[0].visitCount
-    }
 
     const { rows: getShortUrls } = await clientPg.query(`
     SELECT id, "shortUrl", url, views as "visitCount" FROM "shortenUrls"
@@ -30,7 +24,7 @@ export async function getUserData (idUser){
 
     return {
         ...findUser[0],
-        visitCount,
+        visitCount: getCountsVisit[0].visitCount? getCountsVisit[0].visitCount : 0  ,
         shortenedUrls: getShortUrls
     }
 }
